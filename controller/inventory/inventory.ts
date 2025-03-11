@@ -23,7 +23,7 @@ export const getInventoryFn = async (req: Request, res: Response) => {
         const data: any = await getInventory();
         res.status(200).json({ success: true, data: data });
     } catch (error) {
-        res.status(500).json({ error: "error not inserted" });
+        res.status(500).json({ error: error });
     }
 }
 
