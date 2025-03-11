@@ -26,8 +26,8 @@ export const getInventory = async () => {
         const query2 = "select count(*) as rowCount from inventory";
         const result: any = await pool.query(query);
         const rowCount: any = await pool.query(query2);
-        // console.log("row--->", rowCount.rows[0].rowcount);
-        // console.log("res--->", rowCount);
+        console.log("row--->", rowCount.rows[0].rowcount);
+        console.log("res--->", rowCount);
 
         return {
             message: "inventory data fetched successfully",
