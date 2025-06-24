@@ -34,8 +34,8 @@ const router = Router();
  */
 async function checkCpu(): Promise<any> {
     try {
-        const result: any = await usagePercent();
-        const core0Usage: any = await usagePercent({ coreIndex: 0, sampleMs: 2000 });
+        const result = await usagePercent();
+        const core0Usage = await usagePercent({ coreIndex: 0, sampleMs: 2000 });
         const allSpeeds: number[] = clockMHz() as number[];
         const core1Speed: number = clockMHz(1) as number;
 
@@ -48,14 +48,6 @@ async function checkCpu(): Promise<any> {
             allCoreSpeeds: allSpeeds,
             core1Speed,
         };
-
-        console.log(`CPU usage: ${result.percent}% over ${result.seconds} seconds`);
-        console.log(`Core 0 usage: ${core0Usage.percent}%`);
-        console.log(`Total cores: ${totalCores}`);
-        console.log(`CPU model: ${cpuModel}`);
-        console.log(`Average clock speed: ${avgClockMHz()} MHz`);
-        console.log('All core speeds:', allSpeeds);
-        console.log(`Core 1 speed: ${core1Speed} MHz`);
 
         return data;
     } catch (err: any) {

@@ -43,13 +43,6 @@ type FormattedDiskInfo = Omit<DiskInfo, 'size' | 'used' | 'available'> & {
 async function checkDisks(path?: string): Promise<{ allDisks: FormattedDiskInfo[]; specificDisk?: FormattedDiskInfo[] }> {
     try {
         const allDisks: DiskInfo[] = await getDiskInfo();
-        console.log('All Disks:', allDisks);
-        allDisks.forEach(disk => {
-            console.log(`Disk ${disk.filesystem}:`);
-            console.log(`  Total: ${formatBytes(disk.size)}`);
-            console.log(`  Used: ${formatBytes(disk.used)} (${disk.percentUsed}%)`);
-            console.log(`  Available: ${formatBytes(disk.available)}`);
-        });
 
         // Format allDisks for response
         const formattedAllDisks: FormattedDiskInfo[] = allDisks.map(disk => ({
@@ -72,10 +65,6 @@ async function checkDisks(path?: string): Promise<{ allDisks: FormattedDiskInfo[
                 normalizedPath = `${path}:`;
             }
             const rawSpecificDisk = await getDiskInfo(normalizedPath);
-            console.log(`Specific Disk ${rawSpecificDisk[0]?.filesystem || normalizedPath}:`);
-            console.log(`  Total: ${formatBytes(rawSpecificDisk[0]?.size ?? 0)}`);
-            console.log(`  Used: ${formatBytes(rawSpecificDisk[0]?.used ?? 0)} (${rawSpecificDisk[0]?.percentUsed ?? 0}%)`);
-            console.log(`  Available: ${formatBytes(rawSpecificDisk[0]?.available ?? 0)}`);
 
             // Format specificDisk for response
             specificDisk = rawSpecificDisk.map(disk => ({
@@ -91,7 +80,6 @@ async function checkDisks(path?: string): Promise<{ allDisks: FormattedDiskInfo[
 
         return { allDisks: formattedAllDisks, specificDisk };
     } catch (err: any) {
-        console.error('Disk Error:', err.message);
         throw err;
     }
 }

@@ -44,13 +44,6 @@ async function monitorNetwork(): Promise<{ interfaces: NetworkInterface[]; traff
                 trafficSnapshots.push(formattedTraffic);
                 const snapshotIndex = trafficSnapshots.length;
 
-                console.log(`Snapshot ${snapshotIndex} at ${new Date().toLocaleTimeString()}:`);
-                formattedTraffic.forEach(iface => {
-                    console.log(`Interface: ${iface.interface}`);
-                    console.log(`  Download: ${iface.bytesReceivedPerSec}/s`);
-                    console.log(`  Upload: ${iface.bytesSentPerSec}/s`);
-                });
-
                 if (snapshotIndex >= 10) {
                     networkMonitor.stop();
                     const trafficObject: Record<string, NetworkTraffic[]> = {};
@@ -63,7 +56,6 @@ async function monitorNetwork(): Promise<{ interfaces: NetworkInterface[]; traff
             });
 
             networkMonitor.on('error', (err: Error) => {
-                console.error('Network Monitor error:', err.message);
                 networkMonitor.stop();
                 reject(err);
             });
@@ -85,7 +77,6 @@ async function monitorNetwork(): Promise<{ interfaces: NetworkInterface[]; traff
             }, 10000);
         });
     } catch (err: any) {
-        console.error('Network Error:', err.message);
         throw err;
     }
 }

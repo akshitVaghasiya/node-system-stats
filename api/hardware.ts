@@ -31,27 +31,9 @@ async function checkHardwareStatus(): Promise<any> {
     try {
         const temp: CpuTemperature | null = await getCpuTemperature();
         const battery: BatteryInfo = await getBatteryInfo();
-        console.log("battery-->", battery);
-
         const data = { cpuTemperature: temp, battery };
-        if (temp) {
-            console.log(`CPU temperature: ${temp.main}°C`);
-            console.log(`Individual cores: ${temp.cores.join('°C, ')}°C`);
-        } else {
-            console.log('CPU temperature information not available');
-        }
-        if (battery.hasBattery) {
-            console.log(`Battery level: ${battery.percent}%`);
-            console.log(`Charging: ${battery.isCharging ? 'Yes' : 'No'}`);
-            if (battery.timeRemaining) {
-                console.log(`Time remaining: ${Math.floor(battery.timeRemaining / 60)}h ${battery.timeRemaining % 60}m`);
-            }
-        } else {
-            console.log('No battery detected');
-        }
         return data;
     } catch (err: any) {
-        console.error('Hardware Error:', err.message);
         throw err;
     }
 }

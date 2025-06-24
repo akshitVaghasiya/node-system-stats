@@ -30,7 +30,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-function checkMemory(): any {
+function checkMemory() {
     const memUsage: MemoryUsage = showMemoryUsage();
     const data = {
         usage: memUsage,
@@ -39,17 +39,11 @@ function checkMemory(): any {
         freeMb: showFreeMemory(),
         freeGb: showFreeMemory(true),
     };
-    console.log('Memory usage:', memUsage);
-    console.log(`Total memory: ${data.totalMb} MB`);
-    console.log(`Total memory: ${data.totalGb} GB`);
-    console.log(`Free memory: ${data.freeMb} MB`);
-    console.log(`Free memory: ${data.freeGb} GB`);
     return data;
 }
 
 router.get('/', async (req: Request, res: Response): Promise<void> => {
     if (Object.keys(req.query).length > 0) {
-        console.error('Unexpected query parameters:', Object.keys(req.query));
         res.status(400).json({ errors: [`Unexpected query parameters: ${Object.keys(req.query).join(', ')}`] });
         return;
     }
@@ -57,7 +51,6 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
         const data = checkMemory();
         res.json(data);
     } catch (err: any) {
-        console.error('Memory Error:', err.message);
         res.status(500).json({ error: `Failed to fetch memory data: ${err.message}` });
     }
 });
