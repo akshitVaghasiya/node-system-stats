@@ -8,7 +8,7 @@ const router = Router();
  * @swagger
  * /api/network:
  *   get:
- *     summary: Get network interfaces and traffic
+ *     summary: Get network interfaces and traffic over 10 seconds
  *     responses:
  *       200:
  *         description: Network data
@@ -17,8 +17,8 @@ const router = Router();
  *             schema:
  *               type: object
  *               properties:
- *                 interfaces: { type: array, items: { type: object, properties: { name: { type: string }, ip: { type: string }, mac: { type: string, nullable: true }, type: { type: string }, netmask: { type: string }, internal: { type: boolean, nullable: true }, operstate: { type: string }, mtu: { type: number }, speed: { type: number } } } }
- *                 traffic: { type: array, items: { type: object, properties: { interface: { type: string }, bytesReceivedPerSec: { type: number }, bytesSentPerSec: { type: number } } } }
+ *                 interfaces: { type: array, items: { type: object, properties: { name: { type: 'string' }, ip: { type: 'string' }, mac: { type: 'string', nullable: true }, type: { type: 'string' }, netmask: { type: 'string' }, internal: { type: 'boolean', nullable: true }, operstate: { type: 'string' }, mtu: { type: 'number' }, speed: { type: 'number' } } } }
+ *                 traffic: { type: array, items: { type: array, items: { type: object, properties: { interface: { type: 'string' }, bytesReceivedPerSec: { type: 'string' }, bytesSentPerSec: { type: 'string' } } } } }
  *       400:
  *         description: Unexpected query parameters
  *         content:
@@ -27,39 +27,76 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-async function monitorNetwork(): Promise<any> {
+async function monitorNetwork(): Promise<{ interfaces: NetworkInterface[]; traffic: Record<string, NetworkTraffic[]> }> {
     try {
         const interfaces: any[] = await getNetworkInterfaces();
-        const traffic: NetworkTraffic[] = [];
+        const trafficSnapshots: NetworkTraffic[][] = [];
         const networkMonitor = new NetworkMonitor(1000);
-        networkMonitor.on('data', (trafficData: NetworkTraffic[]) => {
-            traffic.push(...trafficData);
-            trafficData.forEach(iface => {
-                console.log(`Interface: ${iface.interface}`);
-                console.log(`  Download: ${formatBytes(iface.bytesReceivedPerSec)}/s`);
-                console.log(`  Upload: ${formatBytes(iface.bytesSentPerSec)}/s`);
+
+        return new Promise((resolve, reject) => {
+            networkMonitor.on('data', (trafficData: NetworkTraffic[]) => {
+                const formattedTraffic: any = trafficData.map(iface => ({
+                    interface: iface.interface,
+                    bytesReceivedPerSec: formatBytes(iface.bytesReceivedPerSec),
+                    bytesSentPerSec: formatBytes(iface.bytesSentPerSec),
+                }));
+
+                trafficSnapshots.push(formattedTraffic);
+                const snapshotIndex = trafficSnapshots.length;
+
+                console.log(`Snapshot ${snapshotIndex} at ${new Date().toLocaleTimeString()}:`);
+                formattedTraffic.forEach(iface => {
+                    console.log(`Interface: ${iface.interface}`);
+                    console.log(`  Download: ${iface.bytesReceivedPerSec}/s`);
+                    console.log(`  Upload: ${iface.bytesSentPerSec}/s`);
+                });
+
+                if (snapshotIndex >= 10) {
+                    networkMonitor.stop();
+                    const trafficObject: Record<string, NetworkTraffic[]> = {};
+                    trafficSnapshots.forEach((snap, index) => {
+                        trafficObject[String(index + 1)] = snap;
+                    });
+
+                    resolve({ interfaces, traffic: trafficObject });
+                }
             });
+
+            networkMonitor.on('error', (err: Error) => {
+                console.error('Network Monitor error:', err.message);
+                networkMonitor.stop();
+                reject(err);
+            });
+
+            networkMonitor.start();
+
+            setTimeout(() => {
+                networkMonitor.stop();
+                if (trafficSnapshots.length === 0) {
+                    reject(new Error('No network traffic data collected'));
+                } else {
+                    const trafficObject: Record<string, NetworkTraffic[]> = {};
+                    trafficSnapshots.forEach((snap, index) => {
+                        trafficObject[String(index + 1)] = snap;
+                    });
+
+                    resolve({ interfaces, traffic: trafficObject });
+                }
+            }, 10000);
         });
-        networkMonitor.start();
-        await new Promise(resolve => setTimeout(resolve, 10000));
-        networkMonitor.stop();
-        console.log('Network interfaces:', interfaces);
-        return { interfaces, traffic };
     } catch (err: any) {
         console.error('Network Error:', err.message);
         throw err;
     }
 }
 
-router.get('/', async (req: Request, res: Response): Promise<void> => {
-    if (Object.keys(req.query).length > 0) {
-        console.error('Unexpected query parameters:', Object.keys(req.query));
-        res.status(400).json({ errors: [`Unexpected query parameters: ${Object.keys(req.query).join(', ')}`] });
-        return
+router.get('/', async (req: Request, res: Response) => {
+    try {
+        const data = await monitorNetwork();
+        res.json(data);
+    } catch (err: any) {
+        res.status(500).json({ error: `Failed to fetch network data: ${err.message}` });
     }
-    monitorNetwork()
-        .then(data => res.json(data))
-        .catch(err => res.status(500).json({ error: `Failed to fetch network data: ${err.message}` }));
 });
 
 export default router;

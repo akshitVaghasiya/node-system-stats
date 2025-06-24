@@ -22,113 +22,113 @@ const swaggerOptions = {
       description: 'API for monitoring system resources using node-system-stats',
     },
     servers: [{ url: `http://localhost:${port}` }],
-    // components: {
-    //   schemas: {
-    //     Error: {
-    //       type: 'object',
-    //       properties: {
-    //         errors: { type: 'array', items: { type: 'string' } },
-    //       },
-    //     },
-    //     SystemSnapshot: {
-    //       type: 'object',
-    //       properties: {
-    //         timestamp: { type: 'number' },
-    //         cpu: {
-    //           type: 'object',
-    //           properties: {
-    //             usage: { type: 'number' },
-    //             loadAverage: {
-    //               type: 'object',
-    //               properties: {
-    //                 oneMinute: { type: 'number' },
-    //                 fiveMinute: { type: 'number' },
-    //                 fifteenMinute: { type: 'number' },
-    //               },
-    //             },
-    //             temperature: {
-    //               type: 'object',
-    //               nullable: true,
-    //               properties: {
-    //                 main: { type: 'number' },
-    //                 cores: { type: 'array', items: { type: 'number' } },
-    //               },
-    //             },
-    //           },
-    //         },
-    //         memory: {
-    //           type: 'object',
-    //           properties: {
-    //             used: { type: 'number' },
-    //             total: { type: 'number' },
-    //             free: { type: 'number' },
-    //             percentUsed: { type: 'number' },
-    //           },
-    //         },
-    //         disks: {
-    //           type: 'array',
-    //           nullable: true,
-    //           items: {
-    //             type: 'object',
-    //             properties: {
-    //               filesystem: { type: 'string' },
-    //               size: { type: 'number' },
-    //               used: { type: 'number' },
-    //               available: { type: 'number' },
-    //               percentUsed: { type: 'number' },
-    //               mountpoint: { type: 'string', nullable: true },
-    //             },
-    //           },
-    //         },
-    //         battery: {
-    //           type: 'object',
-    //           nullable: true,
-    //           properties: {
-    //             hasBattery: { type: 'boolean' },
-    //             percent: { type: 'number' },
-    //             isCharging: { type: 'boolean' },
-    //             timeRemaining: { type: 'number', nullable: true },
-    //           },
-    //         },
-    //         processes: {
-    //           type: 'array',
-    //           nullable: true,
-    //           items: {
-    //             type: 'object',
-    //             properties: {
-    //               pid: { type: 'number' },
-    //               name: { type: 'string' },
-    //               cpu: { type: 'number' },
-    //               memory: { type: 'number' },
-    //               memoryPercent: { type: 'number' },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //     CpuStats: {
-    //       type: 'object',
-    //       properties: {
-    //         min: { type: 'number' },
-    //         max: { type: 'number' },
-    //         avg: { type: 'number' },
-    //       },
-    //     },
-    //     MemoryStats: {
-    //       type: 'object',
-    //       properties: {
-    //         percentUsed: {
-    //           type: 'object',
-    //           properties: {
-    //             min: { type: 'number' },
-    //             max: { type: 'number' },
-    //             avg: { type: 'number' },
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // },
+    components: {
+      schemas: {
+        Error: {
+          type: 'object',
+          properties: {
+            errors: { type: 'array', items: { type: 'string' } },
+          },
+        },
+        SystemSnapshot: {
+          type: 'object',
+          properties: {
+            timestamp: { type: 'number' },
+            cpu: {
+              type: 'object',
+              properties: {
+                usage: { type: 'number' },
+                loadAverage: {
+                  type: 'object',
+                  properties: {
+                    oneMinute: { type: 'number' },
+                    fiveMinute: { type: 'number' },
+                    fifteenMinute: { type: 'number' },
+                  },
+                },
+                temperature: {
+                  type: 'object',
+                  nullable: true,
+                  properties: {
+                    main: { type: 'number' },
+                    cores: { type: 'array', items: { type: 'number' } },
+                  },
+                },
+              },
+            },
+            memory: {
+              type: 'object',
+              properties: {
+                used: { type: 'number' },
+                total: { type: 'number' },
+                free: { type: 'number' },
+                percentUsed: { type: 'number' },
+              },
+            },
+            disks: {
+              type: 'array',
+              nullable: true,
+              items: {
+                type: 'object',
+                properties: {
+                  filesystem: { type: 'string' },
+                  size: { type: 'number' },
+                  used: { type: 'number' },
+                  available: { type: 'number' },
+                  percentUsed: { type: 'number' },
+                  mountpoint: { type: 'string', nullable: true },
+                },
+              },
+            },
+            battery: {
+              type: 'object',
+              nullable: true,
+              properties: {
+                hasBattery: { type: 'boolean' },
+                percent: { type: 'number' },
+                isCharging: { type: 'boolean' },
+                timeRemaining: { type: 'number', nullable: true },
+              },
+            },
+            processes: {
+              type: 'array',
+              nullable: true,
+              items: {
+                type: 'object',
+                properties: {
+                  pid: { type: 'number' },
+                  name: { type: 'string' },
+                  cpu: { type: 'number' },
+                  memory: { type: 'number' },
+                  memoryPercent: { type: 'number' },
+                },
+              },
+            },
+          },
+        },
+        CpuStats: {
+          type: 'object',
+          properties: {
+            min: { type: 'number' },
+            max: { type: 'number' },
+            avg: { type: 'number' },
+          },
+        },
+        MemoryStats: {
+          type: 'object',
+          properties: {
+            percentUsed: {
+              type: 'object',
+              properties: {
+                min: { type: 'number' },
+                max: { type: 'number' },
+                avg: { type: 'number' },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   apis: ['./api/*.ts'],
 };
@@ -157,11 +157,7 @@ app.use('/api', routes as Router);
  *           application/json:
  *             schema: { $ref: '#/components/schemas/Error' }
  */
-app.get('/', async (req: Request, res: Response): Promise<void> => {
-  if (Object.keys(req.query).length > 0) {
-    res.status(400).json({ errors: ['Unexpected query parameters'] });
-    return 
-  }
+app.get('/', (req: Request, res: Response) => {
   res.send('System Monitor Server');
 });
 

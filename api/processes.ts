@@ -8,7 +8,7 @@ const router = Router();
  * @swagger
  * /api/processes:
  *   get:
- *     summary: Get top CPU and memory-intensive processes
+ *     summary: Get top 5 CPU and memory-intensive processes
  *     responses:
  *       200:
  *         description: Process data
@@ -31,6 +31,8 @@ async function monitorProcesses(): Promise<any> {
     try {
         const cpuProcesses: ProcessInfo[] = await getTopProcesses(5, 'cpu'); // cpu
         const memoryProcesses: ProcessInfo[] = await getTopProcesses(5, 'memory'); // memory
+        console.log("memory-->", memoryProcesses);
+
         const validMemoryProcesses = memoryProcesses.filter(proc => !isNaN(proc.pid) && proc.name !== proc.memory.toString());
         console.log('Top CPU processes:', cpuProcesses);
         console.log('Top memory processes:', validMemoryProcesses);
@@ -42,7 +44,7 @@ async function monitorProcesses(): Promise<any> {
         validMemoryProcesses.forEach(proc => {
             console.log(`  ${proc.name} (PID ${proc.pid}): CPU ${proc.cpu.toFixed(1)}%, Memory ${formatBytes(proc.memory)}`);
         });
-        return { cpuProcesses, memoryProcesses: validMemoryProcesses };
+        return { cpuProcesses, memoryProcesses };
     } catch (err: any) {
         console.error('Process Error:', err.message);
         throw err;

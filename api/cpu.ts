@@ -64,13 +64,7 @@ async function checkCpu(): Promise<any> {
     }
 }
 
-router.get('/', async (req: Request, res: Response): Promise<void> => {
-    if (Object.keys(req.query).length > 0) {
-        console.error('Unexpected query parameters:', Object.keys(req.query));
-        res.status(400).json({ errors: [`Unexpected query parameters: ${Object.keys(req.query).join(', ')}`] });
-        return;
-    }
-
+router.get('/', async (req: Request, res: Response) => {
     try {
         const data = await checkCpu();
         res.json(data);

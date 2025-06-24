@@ -31,6 +31,8 @@ async function checkHardwareStatus(): Promise<any> {
     try {
         const temp: CpuTemperature | null = await getCpuTemperature();
         const battery: BatteryInfo = await getBatteryInfo();
+        console.log("battery-->", battery);
+
         const data = { cpuTemperature: temp, battery };
         if (temp) {
             console.log(`CPU temperature: ${temp.main}°C`);
@@ -55,11 +57,6 @@ async function checkHardwareStatus(): Promise<any> {
 }
 
 router.get('/', async (req: Request, res: Response): Promise<void> => {
-    if (Object.keys(req.query).length > 0) {
-        console.error('Unexpected query parameters:', Object.keys(req.query));
-        res.status(400).json({ errors: [`Unexpected query parameters: ${Object.keys(req.query).join(', ')}`] });
-        return
-    }
     checkHardwareStatus()
         .then(data => res.json(data))
         .catch(err => res.status(500).json({ error: `Failed to fetch hardware data: ${err.message}` }));
