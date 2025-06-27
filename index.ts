@@ -5,14 +5,12 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import routes from './api/routes';
 
-// Express setup
 dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], credentials: true }));
 app.use(express.json());
 
-// Swagger setup
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
@@ -135,10 +133,8 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// Routes
 app.use('/api', routes as Router);
 
-// Default route
 /**
  * @swagger
  * /:
@@ -161,7 +157,6 @@ app.get('/', (req: Request, res: Response) => {
   res.send('System Monitor Server');
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
 });
