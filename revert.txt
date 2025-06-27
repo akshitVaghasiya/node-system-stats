@@ -1,3 +1,7 @@
 hello main branch
 edited
+<<<<<<< Updated upstream
 edited again
+=======
+hello
+>>>>>>> Stashed changes
